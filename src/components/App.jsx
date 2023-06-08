@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { nanoid } from 'nanoid';
 
 import ContactForm from './ContactForm/ContactForm';
@@ -7,26 +7,27 @@ import Filter from './Filter/Filter';
 import './../app.css/app.module.css';
 
 const App = () => {
-  const [contacts, setContacts] = useState([
+  const initialState = [
     { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
     { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
     { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
     { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-  ]);
+  ];
+
+  const [contacts, setContacts] = useState(
+    getDataFromLocalStorage() || initialState
+  );
   const [filter, setFilter] = useState('');
 
-  useEffect(() => {
+  function getDataFromLocalStorage() {
     const storedContacts = localStorage.getItem('contacts');
     const parsedContacts = JSON.parse(storedContacts);
+    return Array.isArray(parsedContacts) ? parsedContacts : null;
+  }
 
-    if (parsedContacts) {
-      setContacts(parsedContacts);
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
+  function saveDataToLocalStorage(data) {
+    localStorage.setItem('contacts', JSON.stringify(data));
+  }
 
   const addContact = (name, number) => {
     if (contacts.find(contact => contact.name === name)) {
@@ -40,7 +41,9 @@ const App = () => {
       number,
     };
 
-    setContacts(prevContacts => [newContact, ...prevContacts]);
+    const updatedContacts = [newContact, ...contacts];
+    setContacts(updatedContacts);
+    saveDataToLocalStorage(updatedContacts);
   };
 
   const changeFilter = event => {
@@ -56,9 +59,11 @@ const App = () => {
   };
 
   const deleteContact = contactId => {
-    setContacts(prevContacts =>
-      prevContacts.filter(contact => contact.id !== contactId)
+    const updatedContacts = contacts.filter(
+      contact => contact.id !== contactId
     );
+    setContacts(updatedContacts);
+    saveDataToLocalStorage(updatedContacts);
   };
 
   const visibleContacts = getVisibleContacts();
