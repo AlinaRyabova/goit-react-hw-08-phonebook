@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { removeContact } from '../../redux/contactsSlice';
 import { getVisibleContacts } from '../../redux/selectors';
 import style from './ContactList.module.css';
+import PropTypes from 'prop-types';
 
 export default function ContactList() {
   const contacts = useSelector(getVisibleContacts);
@@ -32,3 +33,10 @@ export default function ContactList() {
     </ul>
   );
 }
+ContactList.propTypes = {
+  contacts: PropTypes.array,
+  id: PropTypes.string,
+  name: PropTypes.string,
+  number: PropTypes.string,
+  onDeleteContact: PropTypes.func,
+};
