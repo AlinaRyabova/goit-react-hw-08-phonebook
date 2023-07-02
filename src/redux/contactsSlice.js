@@ -17,11 +17,11 @@ const contactsSlice = createSlice({
       reducer(state, action) {
         state.items.push(action.payload);
       },
-    },
-    prepare(newContact) {
-      return {
-        payload: { id: nanoid(), ...newContact },
-      };
+      prepare(newContact) {
+        return {
+          payload: { id: nanoid(), ...newContact },
+        };
+      },
     },
     removeContact(state, action) {
       const index = state.items.findIndex(
