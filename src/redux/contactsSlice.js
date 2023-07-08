@@ -1,42 +1,76 @@
-import { createSlice, nanoid } from '@reduxjs/toolkit';
-import { persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { fetchContacts, addContacts, deleteContacts } from './operations';
 
-const contactsInitialState = {
-  items: [
-    { id: 'id-1', name: 'Steve Jobs', number: '459-12-56' },
-    { id: 'id-2', name: 'Bill Gates', number: '443-89-12' },
-    { id: 'id-3', name: 'Elon Musk', number: '645-17-79' },
-    { id: 'id-4', name: 'Mark Zuckerberg', number: '227-91-26' },
-  ],
-};
+const initialState = { items: [], isLoading: false, error: null };
+
+export const fetchContactsAsync = createAsyncThunk(
+  'contacts/fetchContacts',
+  async () => {
+    const response = await fetchContacts();
+    return response.data;
+  }
+);
+
+export const addContactsAsync = createAsyncThunk(
+  'contacts/addContacts',
+  async contact => {
+    const response = await addContacts(contact);
+    return response.data;
+  }
+);
+
+export const deleteContactsAsync = createAsyncThunk(
+  'contacts/deleteContacts',
+  async id => {
+    const response = await deleteContacts(id);
+    return response.data;
+  }
+);
 
 const contactsSlice = createSlice({
   name: 'contacts',
-  initialState: contactsInitialState,
-  reducers: {
-    addContact: {
-      reducer(state, action) {
-        state.items.push(action.payload);
-      },
-      prepare(newContact) {
-        return {
-          payload: { id: nanoid(), ...newContact },
-        };
-      },
-    },
-    removeContact(state, action) {
-      const index = state.items.findIndex(
-        contact => contact.id === action.payload
+  initialState,
+  reducers: {},
+  extraReducers: builder => {
+    builder
+      .addCase(fetchContactsAsync.fulfilled, (state, action) => {
+        state.items = action.payload;
+      })
+      .addCase(addContactsAsync.fulfilled, (state, action) => {
+        state.items.unshift(action.payload);
+      })
+      .addCase(deleteContactsAsync.fulfilled, (state, action) => {
+        const index = state.items.findIndex(
+          contact => contact.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.items.splice(index, 1);
+        }
+      })
+      .addMatcher(
+        action =>
+          action.type.endsWith('/pending') ||
+          action.type.endsWith('/fulfilled') ||
+          action.type.endsWith('/rejected'),
+        state => {
+          state.isLoading = true;
+        }
+      )
+      .addMatcher(
+        action => action.type.endsWith('/rejected'),
+        (state, action) => {
+          state.isLoading = false;
+          state.error = action.error.message;
+        }
+      )
+      .addMatcher(
+        action => action.type.endsWith('/fulfilled'),
+        state => {
+          state.isLoading = false;
+          state.error = null;
+        }
       );
-      state.items.splice(index, 1);
-    },
   },
 });
 
-export const { addContact, removeContact } = contactsSlice.actions;
-
-export const contactsReducer = persistReducer(
-  { key: 'contacts', storage },
-  contactsSlice.reducer
-);
+export const contactsReducer = contactsSlice.reducer;
