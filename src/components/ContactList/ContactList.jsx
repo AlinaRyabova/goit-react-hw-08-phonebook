@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectVisibleContacts } from '../../redux/selectors';
-import { deleteContacts } from '../../redux/operations';
+import { deleteContact } from '../../redux/operations';
 
 export default function ContactList() {
   const contacts = useSelector(selectVisibleContacts);
@@ -9,13 +9,13 @@ export default function ContactList() {
 
   return (
     <ul>
-      {contacts.map(contact => (
-        <li key={contact.id}>
-          {contact.name}: {contact.number}
+      {contacts.map(({ id, name, phone }) => (
+        <li key={id}>
+          {name + ' : ' + phone}
           <button
             type="button"
             name="delete"
-            onClick={() => dispatch(deleteContacts(contact.id))}
+            onClick={() => dispatch(deleteContact(id))}
           >
             Delete
           </button>

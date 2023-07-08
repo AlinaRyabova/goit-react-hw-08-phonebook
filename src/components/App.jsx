@@ -3,15 +3,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import Filter from './Filter/Filter';
 import ContactForm from './ContactForm/ContactForm';
 import ContactList from './ContactList/ContactList';
-import { fetchContacts } from '../redux/operations';
-import { selectContacts } from '../redux/selectors';
+import { fetchAll } from '../redux/operations';
+import { selectContact } from '../redux/selectors';
 
 const App = () => {
-  const contacts = useSelector(selectContacts);
+  const contacts = useSelector(selectContact);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchContacts());
+    dispatch(fetchAll());
   }, [dispatch]);
   return (
     <>
