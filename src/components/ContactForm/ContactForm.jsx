@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { nanoid } from '@reduxjs/toolkit';
 import style from './ContactForm.module.css';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectContact } from '../../redux/selectors';
+import { selectVisibleContacts } from '../../redux/selectors';
 import { addContact } from '../../redux/operations';
 
 const ContactForm = () => {
@@ -12,7 +12,7 @@ const ContactForm = () => {
   const contactNameId = nanoid();
   const contactNumberId = nanoid();
 
-  const contacts = useSelector(selectContact);
+  const contacts = useSelector(selectVisibleContacts);
   const dispatch = useDispatch();
 
   const handleChange = event => {
@@ -46,7 +46,7 @@ const ContactForm = () => {
       return;
     }
 
-    dispatch(addContact({ name, number }));
+    dispatch(addContact({ id: nanoid(), name, number }));
     setName('');
     setNumber('');
   };
