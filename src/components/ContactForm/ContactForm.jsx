@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { nanoid } from '@reduxjs/toolkit';
 import style from './ContactForm.module.css';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectVisibleContacts } from '../../redux/selectors';
+import { selectContact } from '../../redux/selectors';
 import { addContact } from '../../redux/operations';
 
 const ContactForm = () => {
@@ -12,11 +12,12 @@ const ContactForm = () => {
   const contactNameId = nanoid();
   const contactNumberId = nanoid();
 
-  const contacts = useSelector(selectVisibleContacts);
+  const contacts = useSelector(selectContact);
   const dispatch = useDispatch();
 
   const handleChange = event => {
     const { name, value } = event.target;
+
     switch (name) {
       case 'name':
         setName(value);
@@ -32,17 +33,12 @@ const ContactForm = () => {
   const handleSubmit = event => {
     event.preventDefault();
 
-    if (name === '') {
-      alert(`Введіть, будь ласка, ім'я контакту.`);
-      return;
-    }
+    const isAdded = contacts.find(
+      contact => contact.name.toLowerCase() === name.toLowerCase()
+    );
 
-    if (number === '') {
-      alert(`Введіть, будь ласка, номер телефону контакту`);
-      return;
-    }
-    if (contacts.find(contact => contact.name === name)) {
-      alert(`${name} is already in contacts.`);
+    if (isAdded) {
+      alert(`${name} is already in contacts`);
       return;
     }
 

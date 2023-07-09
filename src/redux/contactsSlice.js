@@ -36,5 +36,4 @@ const contactsSlice = createSlice({
   },
 });
 
-const { reducer: contactsReducer } = contactsSlice;
-export default contactsReducer;
+export const contactsReducer = contactsSlice.reducer;
