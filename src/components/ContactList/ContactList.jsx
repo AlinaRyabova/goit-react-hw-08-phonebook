@@ -10,9 +10,9 @@ export default function ContactList() {
 
   return (
     <ul className={style.list}>
-      {contacts.map(({ id, name, phone }) => (
+      {contacts.map(({ id, name, number }) => (
         <li key={id} className={style.item}>
-          {name + ' : ' + phone}
+          {name + ' : ' + number}
           <button
             className={style.button}
             type="button"
