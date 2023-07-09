@@ -3,7 +3,6 @@
   align-items: center;
   flex-direction: column;
   margin-bottom: 20px;
-  border-radius: 10px;
 }
 
 .label {
@@ -14,6 +13,7 @@
 .input {
   padding: 8px;
   margin-bottom: 16px;
+  border-radius: 10px;
 }
 
 .button {
