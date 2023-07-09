@@ -15,9 +15,9 @@ li {
 }
 
 button:hover {
-  background-color: #f436c5;
+  background-color: blueviolet;
 }
 
 button:active {
-  background-color: #f436c5;
+  background-color: blueviolet;
 }

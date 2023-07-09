@@ -24,9 +24,9 @@
 }
 
 .button:hover {
-  background-color: #a641a6;
+  background-color: blueviolet;
 }
 
 .button:active {
-  background-color: #a641a6;
+  background-color: blueviolet;
 }
