@@ -58,7 +58,6 @@ const ContactForm = () => {
           value={name}
           onChange={handleChange}
           id={contactNameId}
-          pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
         />
       </label>
       <label className={style.label} htmlFor={contactNumberId}>
