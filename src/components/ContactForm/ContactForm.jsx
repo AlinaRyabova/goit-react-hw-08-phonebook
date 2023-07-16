@@ -1,23 +1,41 @@
-import React, { useState } from 'react';
-import { nanoid } from '@reduxjs/toolkit';
-import style from './ContactForm.module.css';
+import { useState } from 'react';
+import { nanoid } from 'nanoid';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectContact } from '../../redux/selectors';
-import { addContact } from '../../redux/operations';
+import { Filter } from '../Filter/Filter';
+import { selectContacts } from '../../redux/contacts/selectors';
+import { addContacts } from '../../redux/contacts/operations';
+import { Form, Label, Input, Button } from './ContactForm.styled';
 
-const ContactForm = () => {
+const nameInputId = nanoid();
+const numberInputId = nanoid();
+
+export const ContactForm = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
-
-  const contactNameId = nanoid();
-  const contactNumberId = nanoid();
-
-  const contacts = useSelector(selectContact);
+  const contacts = useSelector(selectContacts);
   const dispatch = useDispatch();
 
-  const handleChange = event => {
-    const { name, value } = event.target;
+  const handleSubmit = event => {
+    event.preventDefault();
 
+    const isInContacts = contacts.some(
+      contact => contact.name.toLowerCase() === name.toLowerCase()
+    );
+
+    if (isInContacts) {
+      alert(`${name} вже в контактах`);
+
+      return;
+    }
+
+    dispatch(addContacts({ name, number }));
+
+    setName('');
+    setNumber('');
+  };
+
+  const handleChange = event => {
+    const { name, value } = event.currentTarget;
     switch (name) {
       case 'name':
         setName(value);
@@ -30,53 +48,42 @@ const ContactForm = () => {
     }
   };
 
-  const handleSubmit = event => {
-    event.preventDefault();
-
-    const isAdded = contacts.find(
-      contact => contact.name.toLowerCase() === name.toLowerCase()
-    );
-
-    if (isAdded) {
-      alert(`${name} is already in contacts`);
-      return;
-    }
-
-    dispatch(addContact({ id: nanoid(), name, number }));
-    setName('');
-    setNumber('');
-  };
-
   return (
-    <form className={style.form} onSubmit={handleSubmit}>
-      <label className={style.label} htmlFor={contactNameId}>
-        Name
-        <input
-          className={style.input}
-          type="text"
-          name="name"
-          value={name}
-          onChange={handleChange}
-          id={contactNameId}
-        />
-      </label>
-      <label className={style.label} htmlFor={contactNumberId}>
-        Number
-        <input
-          className={style.input}
-          type="text"
-          name="number"
-          value={number}
-          onChange={handleChange}
-          id={contactNumberId}
-        />
-      </label>
+    <>
+      <Form onSubmit={handleSubmit}>
+        <Label htmlFor={nameInputId}>
+          Name
+          <Input
+            type="text"
+            name="name"
+            placeholder="Введіть ім'я"
+            value={name}
+            onChange={handleChange}
+            pattern="^[^\d]+$"
+            title="Ім'я має містити лише літери, апострофи, дефіси та відступи"
+            required
+          />
+        </Label>
 
-      <button className={style.button} type="submit">
-        Add contact
-      </button>
-    </form>
+        <Label htmlFor={numberInputId}>
+          Number
+          <Input
+            type="tel"
+            name="number"
+            placeholder="Введіть номер телефону"
+            value={number}
+            onChange={handleChange}
+            pattern="\+\d{12}"
+            minlength="13"
+            maxlength="13"
+            title="Номер телефону має починатися з +, а потім 12 цифр"
+            required
+          />
+        </Label>
+
+        <Button type="submit">Add contact </Button>
+      </Form>
+      <Filter />
+    </>
   );
 };
-
-export default ContactForm;
